@@ -15,10 +15,10 @@ if __name__ == "__main__":
     mongo_client = mongoDBclient()
     print(mongo_client.client.test)
     print(mongo_client.database.list_collection_names())
-    # try:
-    #     logging.info("Executing test_exception function")
-    #     test_exception()
-    #     logging.info("test_exception function executed successfully")
-    # except Exception as e:
-    #     logging.info(e)
-    #     print(e)
+    try:
+        logging.info("Executing test_exception function")
+        test_exception()
+        logging.info("test_exception function executed successfully")
+    except Exception as e:
+        logging.info(e)
+        print(e)
