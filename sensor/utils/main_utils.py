@@ -59,3 +59,16 @@ def save_object(file_path:str,obj:object)->None:
         logging.info("Exited from save_object method of MainUtils")
     except Exception as e:
         raise SensorException(e,sys) from e 
+    
+def load_object(file_path:str)->object:
+    try:
+        logging.info("Entered into load_object method of MainUtils")
+        if not os.path.exists(file_path):
+            raise Exception(f"the file : {file_path} is not exists")
+        with open(file_path,"rb") as file_obj:
+            dill.load(file_obj)
+
+            return dill
+        logging.info("Exited from load_object method of MainUtils")
+    except Exception as e:
+        raise SensorException(e,sys) from e 
