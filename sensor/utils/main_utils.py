@@ -66,9 +66,8 @@ def load_object(file_path:str)->object:
         if not os.path.exists(file_path):
             raise Exception(f"the file : {file_path} is not exists")
         with open(file_path,"rb") as file_obj:
-            dill.load(file_obj)
+            return dill.load(file_obj)
 
-            return dill
         logging.info("Exited from load_object method of MainUtils")
     except Exception as e:
         raise SensorException(e,sys) from e 

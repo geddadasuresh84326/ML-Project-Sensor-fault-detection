@@ -10,6 +10,7 @@ from sensor.utils.main_utils import save_object,load_object,write_yaml_file
 from sensor.ml.model.estimator import ModelResolver
 import pandas as pd
 from sensor.constant.training_pipeline import TARGET_COLUMN
+from sensor.ml.model.estimator import TargetValueMapping
 
 class ModelEvaluation:
 
@@ -31,6 +32,9 @@ class ModelEvaluation:
             test_df = pd.read_csv(valid_test_file_path)
 
             df = pd.concat([train_df,test_df])
+            y_true = df[TARGET_COLUMN]
+            y_true.replace(TargetValueMapping().to_dict(),inplace= True)
+            df.drop(TARGET_COLUMN,axis=1,inplace=True)
 
             trained_model_file_path = self.model_trainer_artifact.trained_model_file_path
             model_resolver = ModelResolver()
@@ -51,14 +55,13 @@ class ModelEvaluation:
             latest_model = load_object(file_path=latest_model_file_path)
             trained_model = load_object(file_path=trained_model_file_path)
 
-            y_true = df[TARGET_COLUMN]
             y_trained_pred = trained_model.predict(df)
             y_latest_pred = latest_model.predict(df)
 
             trained_metric = get_classification_score(y_true=y_true,y_pred=y_trained_pred)
             latest_metric = get_classification_score(y_true=y_true,y_pred=y_latest_pred)
 
-            improved_accuracy = trained_metric - latest_metric
+            improved_accuracy = trained_metric.f1_score - latest_metric.f1_score
             if self.model_evaluation_config.change_threshold < improved_accuracy:
                 # 0.02 < 0.03
                 is_model_accepted = True

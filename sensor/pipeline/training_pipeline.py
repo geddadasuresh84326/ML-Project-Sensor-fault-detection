@@ -12,6 +12,7 @@ from  sensor.components.model_pusher import ModelPusher
 
 
 class TrainingPipeline:
+    is_pipeline_running = False
     def __init__(self):
         self.training_pipeline_config = TrainingPipelineConfig()
 
@@ -84,6 +85,7 @@ class TrainingPipeline:
 
     def run_pipeline(self):
         try:
+            TrainingPipeline.is_pipeline_running = True
             data_ingestion_artifact:DataIngestionArtifact = self.start_data_ingestion()
             data_validation_artifact:DataValidationArtifact = self.start_data_validation(data_ingestion_artifact=data_ingestion_artifact)
             data_transformation_artifact:DataTransformationArtifact = self.start_data_transformation(data_validation_artifact=data_validation_artifact)
@@ -93,5 +95,6 @@ class TrainingPipeline:
                 raise Exception("Trained model is not better than best model")
             model_pusher_artifact = self.start_model_pusher(model_eval_artifact=model_evaluation_artifact)
 
+            TrainingPipeline.is_pipeline_running = False
         except Exception as e:
             raise SensorException(e,sys)
